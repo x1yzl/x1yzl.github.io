@@ -615,83 +615,6 @@
     color: #b0aba5;
   }
 
-  /* ── BLOG ── */
-  #blog { background: var(--ink-mid); }
-  .blog-grid {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 2rem;
-  }
-  .blog-featured {
-    border: 1px solid rgba(139,0,0,0.2);
-    background: rgba(8,6,8,0.6);
-    overflow: hidden;
-    transition: all 0.4s;
-    cursor: none;
-  }
-  .blog-featured:hover { border-color: rgba(139,0,0,0.5); }
-  .blog-feat-img {
-    height: 260px;
-    background: var(--ink-light);
-    position: relative; overflow: hidden;
-    border-bottom: 1px solid rgba(139,0,0,0.1);
-  }
-  .blog-feat-img-inner {
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(
-      -45deg,
-      rgba(139,0,0,0.03) 0px, rgba(139,0,0,0.03) 1px,
-      transparent 1px, transparent 20px
-    );
-  }
-  .blog-feat-label {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-mono); font-size: 0.6rem;
-    letter-spacing: 0.2em; color: var(--blood-dim);
-  }
-  .blog-feat-body { padding: 2rem; }
-  .blog-meta {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    color: #8B0000;
-    text-transform: uppercase;
-    margin-bottom: 0.8rem;
-    display: flex; gap: 1rem; align-items: center;
-  }
-  .blog-title-text {
-    font-family: var(--font-serif);
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #f0ece6;
-    margin-bottom: 0.8rem;
-    line-height: 1.35;
-  }
-  .blog-excerpt {
-    font-size: 0.95rem;
-    line-height: 1.9;
-    color: #c0bbb5;
-    margin-bottom: 1.5rem;
-  }
-  .blog-side { display: flex; flex-direction: column; gap: 1rem; }
-  .blog-mini {
-    border: 1px solid rgba(139,0,0,0.12);
-    padding: 1.5rem;
-    background: rgba(8,6,8,0.6);
-    transition: all 0.3s;
-    cursor: none;
-  }
-  .blog-mini:hover { border-color: rgba(139,0,0,0.4); background: rgba(139,0,0,0.04); }
-  .blog-mini .blog-meta { margin-bottom: 0.5rem; }
-  .blog-mini-title {
-    font-family: var(--font-serif);
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #e8e4de;
-    line-height: 1.45;
-  }
-
   /* ── CONTACT ── */
   #contact {
     background: var(--ink);
@@ -838,7 +761,6 @@
     .nav-links { display: none; }
     .about-grid { grid-template-columns: 1fr; }
     .about-portrait-frame { max-width: 200px; }
-    .blog-grid { grid-template-columns: 1fr; }
     footer { flex-direction: column; gap: 1rem; text-align: center; }
   }
 </style>
@@ -1559,7 +1481,6 @@ function App() {
     {id:'skills',label:'Skills'},
     {id:'projects',label:'Projects'},
     {id:'services',label:'Services'},
-    {id:'blog',label:'Articles'},
     {id:'contact',label:'Contact'},
   ];
 
@@ -1591,13 +1512,6 @@ function App() {
     {num:'IV',name:'Design Systems',desc:"If your team keeps reinventing the same components, I can build something consistent you can actually reuse."},
     {num:'V',name:'3D / WebGL',desc:'Basic to intermediate Three.js work. Good for landing pages, portfolios, or anything that needs something different.'},
     {num:'VI',name:'Code Review',desc:"I can look at your codebase and tell you honestly what's working and what isn't. No fluff."},
-  ];
-
-  const blogs = [
-    {tag:'Dev',date:'Apr 2026',title:"Things I wish someone told me before I started building APIs",excerpt:"Mostly stuff I learned the hard way — auth flows, error handling, why your rate limiter is probably wrong. Nothing groundbreaking, just practical.",featured:true},
-    {tag:'Design',date:'Mar 2026',title:"Why I stopped using component libraries and started building my own"},
-    {tag:'Dev',date:'Feb 2026',title:'Dark mode done right — and what most people get wrong'},
-    {tag:'WebGL',date:'Jan 2026',title:"Getting started with Three.js without losing your mind"},
   ];
 
   return (
@@ -1754,46 +1668,6 @@ function App() {
                 <div className="service-desc">{s.desc}</div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* BLOG */}
-      <section id="blog">
-        <div className="section-inner">
-          <div className="section-label reveal">05 — Writings</div>
-          <h2 className="section-title reveal reveal-delay-1">Articles &<br/>Research</h2>
-          <div className="section-sep reveal reveal-delay-2"></div>
-          <div className="blog-grid">
-            <div className="blog-featured reveal reveal-delay-2">
-              <div className="blog-feat-img">
-                <div className="blog-feat-img-inner"></div>
-                <div className="blog-feat-label">article cover</div>
-              </div>
-              <div className="blog-feat-body">
-                <div className="blog-meta">
-                  <span style={{color:'var(--blood)'}}>✦ {blogs[0].tag}</span>
-                  <span style={{color:'var(--parchment-dim)'}}>{blogs[0].date}</span>
-                </div>
-                <div className="blog-title-text">{blogs[0].title}</div>
-                <div className="blog-excerpt">{blogs[0].excerpt}</div>
-                <a href="#" className="btn-ghost" style={{fontSize:'0.7rem',padding:'0.7rem 1.8rem'}}>Read Article</a>
-              </div>
-            </div>
-            <div className="blog-side">
-              {blogs.slice(1).map((b,i)=>(
-                <div key={b.title} className={`blog-mini reveal reveal-delay-${i+2}`}>
-                  <div className="blog-meta">
-                    <span>{b.tag}</span>
-                    <span style={{color:'var(--parchment-dim)'}}>{b.date}</span>
-                  </div>
-                  <div className="blog-mini-title">{b.title}</div>
-                </div>
-              ))}
-              <a href="#" className="btn-ghost reveal reveal-delay-4" style={{textAlign:'center',fontSize:'0.7rem',padding:'0.9rem 1.5rem',marginTop:'auto'}}>
-                All Articles
-              </a>
-            </div>
           </div>
         </div>
       </section>
