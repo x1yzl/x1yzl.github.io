@@ -327,8 +327,7 @@
 
   /* ── ABOUT ── */
   #about {
-    background: var(--ink-mid);
-    border-top: 1px solid rgba(139,0,0,0.12);
+    background: transparent;
   }
   .about-grid {
     display: grid;
@@ -424,7 +423,7 @@
   }
 
   /* ── SKILLS ── */
-  #skills { background: var(--ink); }
+  #skills { background: transparent; }
   .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -478,7 +477,7 @@
   }
 
   /* ── PROJECTS ── */
-  #projects { background: var(--ink-mid); }
+  #projects { background: transparent; }
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -569,7 +568,7 @@
   .project-link:hover { color: #c42020; border-color: #c42020; }
 
   /* ── SERVICES ── */
-  #services { background: var(--ink); }
+  #services { background: transparent; }
   .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -617,7 +616,7 @@
 
   /* ── CONTACT ── */
   #contact {
-    background: var(--ink);
+    background: transparent;
     text-align: center;
   }
   .contact-inner { max-width: 700px; margin: 0 auto; }
@@ -659,7 +658,7 @@
     padding: 2.5rem 4rem;
     border-top: 1px solid rgba(139,0,0,0.1);
     display: flex; align-items: center; justify-content: space-between;
-    background: var(--ink);
+    background: transparent;
   }
   .footer-copy {
     font-family: var(--font-mono);
@@ -1218,7 +1217,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "runesEnabled": true
 }/*EDITMODE-END*/;
 
-// ── CANVAS PARTICLES ──
+// ── CANVAS BACKGROUND — SATANIC STARS ──
 function initCanvas(color) {
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
@@ -1238,17 +1237,55 @@ function initCanvas(color) {
     return {r,g,b};
   }
 
+  // Draw a 5-pointed star / inverted pentagram
+  function drawStar5(cx, cy, outerR, innerR, rot) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const angle = (i * Math.PI / 5) - Math.PI / 2 + rot;
+      const r = i % 2 === 0 ? outerR : innerR;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
   function makeParticle(count) {
     particles = [];
     const c = hex2rgb(color);
-    for (let i = 0; i < count; i++) {
+
+    // Background twinkle micro-dots — dense field of dim red specks
+    for (let i = 0; i < count * 3; i++) {
       particles.push({
+        type: 'dot',
         x: Math.random() * W, y: Math.random() * H,
-        vx: (Math.random()-0.5)*0.3,
-        vy: (Math.random()-0.5)*0.3,
-        r: Math.random()*1.5+0.3,
-        alpha: Math.random()*0.4+0.05,
+        vx: (Math.random()-0.5)*0.06, vy: (Math.random()-0.5)*0.06,
+        r: Math.random()*1.1+0.2,
+        baseAlpha: Math.random()*0.22+0.04,
         pulse: Math.random()*Math.PI*2,
+        pulseSpeed: Math.random()*0.02+0.006,
+        c
+      });
+    }
+
+    // Pentagram stars — tiered sizes for depth
+    for (let i = 0; i < count; i++) {
+      const tier = Math.random();
+      const size = tier < 0.09 ? Math.random()*12+10   // large  10–22 px
+                 : tier < 0.32 ? Math.random()*5+4     // medium  4–9 px
+                 :               Math.random()*3+0.8;   // small   0.8–3.8 px
+      particles.push({
+        type: 'star',
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random()-0.5)*0.1, vy: (Math.random()-0.5)*0.1,
+        outerR: size,
+        innerR: size * 0.38,
+        rotation: Math.random()*Math.PI*2,
+        rotSpeed: (Math.random()-0.5)*0.005*(size < 3 ? 3 : 1),
+        baseAlpha: Math.random()*0.55+0.12,
+        pulse: Math.random()*Math.PI*2,
+        pulseSpeed: Math.random()*0.018+0.006,
+        inverted: Math.random() < 0.35,   // 35 % are inverted pentagrams
         c
       });
     }
@@ -1256,34 +1293,67 @@ function initCanvas(color) {
 
   function draw() {
     ctx.clearRect(0,0,W,H);
-    const t = Date.now()*0.001;
+
     particles.forEach(p => {
       p.x += p.vx; p.y += p.vy;
-      p.pulse += 0.015;
-      if (p.x<0) p.x=W; if (p.x>W) p.x=0;
-      if (p.y<0) p.y=H; if (p.y>H) p.y=0;
-      const alpha = p.alpha*(0.7+0.3*Math.sin(p.pulse));
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(${p.c.r},${p.c.g},${p.c.b},${alpha})`;
-      ctx.fill();
-    });
-    // draw faint connections
-    for (let i=0;i<particles.length;i++) {
-      for (let j=i+1;j<particles.length;j++) {
-        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-        const dist=Math.sqrt(dx*dx+dy*dy);
-        if (dist<120) {
-          const {c}=particles[i];
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x,particles[i].y);
-          ctx.lineTo(particles[j].x,particles[j].y);
-          ctx.strokeStyle=`rgba(${c.r},${c.g},${c.b},${(1-dist/120)*0.08})`;
-          ctx.lineWidth=0.5;
+      p.pulse += p.pulseSpeed;
+      if (p.type === 'star') p.rotation += p.rotSpeed;
+
+      if (p.x < -30) p.x = W+30; if (p.x > W+30) p.x = -30;
+      if (p.y < -30) p.y = H+30; if (p.y > H+30) p.y = -30;
+
+      const alpha = p.baseAlpha * (0.55 + 0.45*Math.sin(p.pulse));
+      const {r:cr, g:cg, b:cb} = p.c;
+
+      if (p.type === 'dot') {
+        // Tiny glowing ember
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+        ctx.fill();
+        if (p.r > 0.6) {
+          const grd = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);
+          grd.addColorStop(0, `rgba(${cr},${cg},${cb},${alpha*0.35})`);
+          grd.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r*4,0,Math.PI*2);
+          ctx.fillStyle = grd; ctx.fill();
+        }
+      } else {
+        const rot = p.inverted ? p.rotation + Math.PI : p.rotation;
+        const pf  = 0.93 + 0.07*Math.sin(p.pulse*1.4);
+        const oR  = p.outerR * pf;
+        const iR  = p.innerR * pf;
+
+        // Atmospheric glow halo
+        if (oR > 5) {
+          const haloR = oR * 5;
+          const grd = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,haloR);
+          grd.addColorStop(0,    `rgba(${cr},${cg},${cb},${alpha*0.22})`);
+          grd.addColorStop(0.35, `rgba(${cr},${cg},${cb},${alpha*0.08})`);
+          grd.addColorStop(1,    `rgba(${cr},${cg},${cb},0)`);
+          ctx.beginPath(); ctx.arc(p.x,p.y,haloR,0,Math.PI*2);
+          ctx.fillStyle = grd; ctx.fill();
+        } else if (oR > 2) {
+          const haloR = oR * 3.5;
+          const grd = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,haloR);
+          grd.addColorStop(0, `rgba(${cr},${cg},${cb},${alpha*0.28})`);
+          grd.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
+          ctx.beginPath(); ctx.arc(p.x,p.y,haloR,0,Math.PI*2);
+          ctx.fillStyle = grd; ctx.fill();
+        }
+
+        // Star body
+        drawStar5(p.x, p.y, oR, iR, rot);
+        ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+        ctx.fill();
+        if (oR > 2) {
+          ctx.strokeStyle = `rgba(${Math.min(255,cr+55)},${cg},${cb},${alpha*0.55})`;
+          ctx.lineWidth   = Math.max(0.3, oR*0.07);
           ctx.stroke();
         }
       }
-    }
+    });
+
     animId = requestAnimationFrame(draw);
   }
 
