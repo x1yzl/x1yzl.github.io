@@ -35,7 +35,6 @@ python -m http.server
 - Skills
 - Projects
 - Services
-- Articles
 - Contact
 
 ## notes
