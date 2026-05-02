@@ -1036,6 +1036,70 @@
   .katana-hero:hover .k-glow-overlay { animation: kGlow 1.6s 0.25s ease-in-out infinite alternate; }
   @keyframes kGlow { from { opacity: 0.12; } to { opacity: 0.44; } }
   @media (max-width: 900px) { .katana-hero { display: none; } }
+
+  /* ── SHOW MORE BUTTON ── */
+  .show-more-wrap {
+    display: flex; justify-content: center; margin-top: 3.5rem;
+  }
+  .btn-show-more {
+    font-family: var(--font-serif);
+    font-size: 0.75rem; letter-spacing: 0.28em; text-transform: uppercase;
+    color: #c8c4be; background: transparent;
+    border: 1px solid rgba(139,0,0,0.38);
+    padding: 1.1rem 3.2rem; cursor: none;
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; gap: 0.9rem;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transform: perspective(700px) translateY(0);
+    transition: color 0.3s, border-color 0.3s,
+                transform 0.3s cubic-bezier(0.23,1,0.32,1),
+                box-shadow 0.3s;
+    box-shadow: 0 4px 0 rgba(80,0,0,0.2);
+  }
+  .btn-show-more .sm-icon {
+    font-size: 1rem; opacity: 0.55; transition: transform 0.3s, opacity 0.3s;
+  }
+  .btn-show-more .sm-arrow {
+    font-size: 0.85rem; opacity: 0.4; transition: transform 0.3s, opacity 0.3s;
+  }
+  .btn-show-more::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #8B0000 0%, #5a0000 100%);
+    transform: scaleX(0); transform-origin: left center;
+    transition: transform 0.42s cubic-bezier(0.23,1,0.32,1);
+    z-index: -1;
+  }
+  .btn-show-more::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 25%, rgba(255,140,140,0.18) 50%, transparent 75%);
+    transform: translateX(-160%);
+    transition: transform 0.65s ease;
+    pointer-events: none;
+  }
+  .btn-show-more:hover {
+    color: #f0ece6; border-color: rgba(139,0,0,0.8);
+    transform: perspective(700px) translateY(-6px) rotateX(10deg) translateZ(5px);
+    box-shadow: 0 12px 0 rgba(60,0,0,0.45), 0 18px 50px rgba(139,0,0,0.4), 0 0 80px rgba(139,0,0,0.15);
+  }
+  .btn-show-more:hover::before { transform: scaleX(1); }
+  .btn-show-more:hover::after  { transform: translateX(160%); }
+  .btn-show-more:hover .sm-icon  { transform: rotate(90deg); opacity: 0.9; }
+  .btn-show-more:hover .sm-arrow { transform: translateX(4px) translateY(-4px); opacity: 0.85; }
+  .btn-show-more:active {
+    transform: perspective(700px) translateY(-2px) rotateX(4deg);
+    box-shadow: 0 3px 0 rgba(80,0,0,0.4);
+    transition-duration: 0.08s;
+  }
+  .btn-show-more.exiting {
+    animation: smExit 0.52s cubic-bezier(0.55,0,1,0.45) forwards;
+  }
+  @keyframes smExit {
+    0%   { transform: perspective(700px) scale(1)    translateY(-6px); opacity: 1; box-shadow: 0 12px 0 rgba(60,0,0,0.45), 0 18px 50px rgba(139,0,0,0.4); }
+    35%  { transform: perspective(700px) scale(1.14) translateY(-10px); opacity: 0.9; box-shadow: 0 0 80px rgba(139,0,0,0.9), 0 0 140px rgba(100,0,0,0.5); }
+    100% { transform: perspective(700px) scale(0.8)  translateY(8px); opacity: 0; box-shadow: none; }
+  }
 </style>
 </head>
 <body>
@@ -1815,6 +1879,32 @@ function DiscordModal({ onAccept, onReject }) {
   );
 }
 
+// ── SHOW MORE BUTTON ──
+function ShowMoreBtn() {
+  const [exiting, setExiting] = React.useState(false);
+  const handle = (e) => {
+    e.preventDefault();
+    if (exiting) return;
+    setExiting(true);
+    setTimeout(() => {
+      window.open('https://github.com/x1yzl/', '_blank', 'noopener,noreferrer');
+      setTimeout(() => setExiting(false), 150);
+    }, 480);
+  };
+  return (
+    <div className="show-more-wrap reveal">
+      <button
+        className={'btn-show-more' + (exiting ? ' exiting' : '')}
+        onClick={handle}
+      >
+        <span className="sm-icon">◈</span>
+        Show more
+        <span className="sm-arrow">↗</span>
+      </button>
+    </div>
+  );
+}
+
 // ── GOTHIC KATANA ──
 function GothicKatana() {
   return (
@@ -2129,31 +2219,28 @@ function App() {
           <h2 className="section-title reveal reveal-delay-1">Projects &<br/>Deployments</h2>
           <div className="section-sep reveal reveal-delay-2"></div>
           <div className="projects-grid">
-            {[
-              {icon:'◈',name:'Component Library',tags:['React','TailwindCSS','Figma'],desc:"My own design system I built while getting tired of starting from scratch every project. Dark-mode first, about 60 components. Still adding stuff to it.",wide:true},
-              {icon:'⬡',name:'REST API Starter',tags:['Node.js','Express','MySQL'],desc:"Personal boilerplate for backend projects. Has auth, rate limiting, basic role system. I use it whenever I need to spin something up fast."},
-              {icon:'✦',name:'3D Scene Experiment',tags:['Three.js','WebGL','GLSL'],desc:"Messing around with Three.js and shaders. Nothing serious, just learning how 3D works in the browser. Turned out pretty cool."},
-              {icon:'⌬',name:'Portfolio v1',tags:['Next.js','CSS'],desc:"My first real portfolio. Scrapped it eventually but learned a lot building it. The bones were solid, the design not so much."},
-            ].map((p,i)=>(
-              <div key={p.name} className={`project-card reveal reveal-delay-${i+1}`} style={p.wide?{gridColumn:'1/-1'}:{}}>
-                <div className="project-thumb" style={p.wide?{height:200}:{}}>
-                  <div className="project-thumb-grid"></div>
-                  <div className="project-thumb-label">
-                    <span className="project-icon">{p.icon}</span>
-                    {p.name}
-                  </div>
-                </div>
-                <div className="project-body">
-                  <div className="project-tag-row">{p.tags.map(t=><span key={t} className="project-tag">{t}</span>)}</div>
-                  <div className="project-name">{p.name}</div>
-                  <p className="project-desc">{p.desc}</p>
-                  <div className="project-links">
-                    <a href="#" className="project-link">↗ View</a>
-                  </div>
+            <div className="project-card reveal reveal-delay-1">
+              <div className="project-thumb">
+                <div className="project-thumb-grid"></div>
+                <div className="project-thumb-label">
+                  <span className="project-icon">⌬</span>
+                  Portfolio v1
                 </div>
               </div>
-            ))}
+              <div className="project-body">
+                <div className="project-tag-row">
+                  <span className="project-tag">Next.js</span>
+                  <span className="project-tag">CSS</span>
+                </div>
+                <div className="project-name">Portfolio v1</div>
+                <p className="project-desc">My first real portfolio. Scrapped it eventually but learned a lot building it. The bones were solid, the design not so much.</p>
+                <div className="project-links">
+                  <a href="https://github.com/x1yzl/x1yzl.github.io" target="_blank" rel="noopener noreferrer" className="project-link">↗ View</a>
+                </div>
+              </div>
+            </div>
           </div>
+          <ShowMoreBtn/>
         </div>
       </section>
 
