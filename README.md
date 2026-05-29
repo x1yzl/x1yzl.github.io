@@ -39,4 +39,4 @@ python -m http.server
 
 ## notes
 
-The accent color, particle count and a couple other things are tweakable through a hidden panel — it shows up when the page receives an `__activate_edit_mode` message (used during development). In production it just stays hidden, doesn't affect anything..
+The accent color, particle count and a couple other things are tweakable through a hidden panel — it shows up when the page receives an `__activate_edit_mode` message (used during development). In production it just stays hidden, doesn't affect anything.
