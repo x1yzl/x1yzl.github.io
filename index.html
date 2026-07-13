@@ -729,11 +729,15 @@ function AboutSection(){
       <div className="section-wrap">
         <div className="reveal"><p className="section-label">About</p><h2 className="section-title">Who <GlowText>I Am</GlowText></h2></div>
         <div className="bento-grid">
-          <div className="bento-cell reveal" style={{gridColumn:'span 7',gridRow:'span 2'}}>
-            <div style={{position:'relative',zIndex:1,height:'100%',display:'flex',flexDirection:'column',justifyContent:'center'}}>
+          <div className="bento-cell reveal" style={{gridColumn:'span 7',gridRow:'span 2',display:'flex',alignItems:'center',gap:32}}>
+            <div style={{position:'relative',zIndex:1,flex:1}}>
               <h3 style={{fontSize:'1.3rem',fontWeight:600,marginBottom:18,color:'var(--text)'}}>Crafting code with <GlowText as="span">precision</GlowText></h3>
               <p style={{color:'var(--text-dim)',lineHeight:1.85,fontSize:'0.92rem',marginBottom:14}}>I'm a Full Stack Developer who believes great software starts with understanding — not just making things work, but knowing <em style={{color:'var(--text)'}}>how</em> and <em style={{color:'var(--text)'}}>why</em> they work.</p>
               <p style={{color:'var(--text-dim)',lineHeight:1.85,fontSize:'0.92rem'}}>Currently growing at <strong style={{color:'var(--primary)'}}>GorillaFang</strong>, working across the full stack with React, Node.js, Express, and PostgreSQL. Always exploring better ways to build.</p>
+            </div>
+            <div style={{flexShrink:0,width:130,height:130,borderRadius:'50%',border:'2px solid rgba(192,192,192,0.2)',overflow:'hidden',boxShadow:'0 0 30px var(--primary-glow), 0 0 60px rgba(192,192,192,0.08)',position:'relative'}}>
+              <img src="portrait.png" alt="x1yzl" style={{width:'100%',height:'100%',objectFit:'cover',display:'block',filter:'grayscale(0.4) contrast(1.1)'}}/>
+              <div style={{position:'absolute',inset:0,borderRadius:'50%',boxShadow:'inset 0 0 20px rgba(0,0,0,0.5)'}} />
             </div>
           </div>
           {stats.map((s,i)=>(
